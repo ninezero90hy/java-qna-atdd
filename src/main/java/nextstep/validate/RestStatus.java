@@ -1,18 +1,19 @@
 package nextstep.validate;
 
 public class RestStatus {
-    private boolean status;
 
-    public RestStatus(boolean status) {
-        this.status = status;
-    }
+  private boolean status;
 
-    public boolean isStatus() {
-        return status;
-    }
+  public RestStatus(boolean status) {
+    this.status = status;
+  }
 
-    @Override
-    public String toString() {
-        return "RestResponse [status=" + status + "]";
-    }
+  public boolean isStatus() {
+    return status;
+  }
+
+  @Override
+  public String toString() {
+    return "RestResponse [status=" + status + "]";
+  }
 }

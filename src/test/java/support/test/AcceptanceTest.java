@@ -14,32 +14,33 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public abstract class AcceptanceTest extends BaseTest {
 
-    private static final String DEFAULT_LOGIN_USER = "javajigi";
+  private static final String DEFAULT_LOGIN_USER = "javajigi";
 
-    @Autowired
-    private TestRestTemplate template;
+  @Autowired
+  private TestRestTemplate template;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-    public TestRestTemplate template() {
-        return template;
-    }
+  public TestRestTemplate template() {
+    return template;
+  }
 
-    public TestRestTemplate basicAuthTemplate() {
-        return basicAuthTemplate(defaultUser());
-    }
+  public TestRestTemplate basicAuthTemplate() {
+    return basicAuthTemplate(defaultUser());
+  }
 
-    public TestRestTemplate basicAuthTemplate(User loginUser) {
-        return template.withBasicAuth(loginUser.getUserId(), loginUser.getPassword());
-    }
+  public TestRestTemplate basicAuthTemplate(User loginUser) {
+    return template.withBasicAuth(loginUser.getUserId(), loginUser.getPassword());
+  }
 
-    protected User defaultUser() {
-        return findByUserId(DEFAULT_LOGIN_USER);
-    }
+  protected User defaultUser() {
+    return findByUserId(DEFAULT_LOGIN_USER);
+  }
 
-    protected User findByUserId(String userId) {
-        return userRepository.findByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("Not found question"));
-    }
+  protected User findByUserId(String userId) {
+    return userRepository.findByUserId(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("Not found question"));
+  }
 
 }

@@ -13,41 +13,45 @@ import support.test.AcceptanceTest;
 @SuppressWarnings({"SpellCheckingInspection", "NonAsciiCharacters"})
 public class LoginAcceptanceTest extends AcceptanceTest {
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
 
-    @SuppressWarnings("ConstantConditions")
-    @Test
-    public void 로그인_성공() {
+  @SuppressWarnings("ConstantConditions")
+  @Test
+  public void 로그인_성공() {
 
-        final String userId = "ninezero90hy";
-        final HttpEntity<MultiValueMap<String, Object>> request = createRequest(userId, "ninezero90hy@");
-        final ResponseEntity<String> response = template().postForEntity("/login", request, String.class);
+    final String userId = "ninezero90hy";
+    final HttpEntity<MultiValueMap<String, Object>> request = createRequest(userId,
+        "ninezero90hy@");
+    final ResponseEntity<String> response = template()
+        .postForEntity("/login", request, String.class);
 
-        softly.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FOUND);
-        softly.assertThat(userRepository.findByUserId(userId).isPresent()).isTrue();
-        softly.assertThat(response.getHeaders().getLocation().getPath()).startsWith("/users");
-    }
+    softly.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FOUND);
+    softly.assertThat(userRepository.findByUserId(userId).isPresent()).isTrue();
+    softly.assertThat(response.getHeaders().getLocation().getPath()).startsWith("/users");
+  }
 
-    @Test
-    public void 로그인_실패() {
+  @Test
+  public void 로그인_실패() {
 
-        final String userId = "ninezero90hy";
-        final HttpEntity<MultiValueMap<String, Object>> request = createRequest(userId, "password");
-        final ResponseEntity<String> response = template().postForEntity("/login", request, String.class);
+    final String userId = "ninezero90hy";
+    final HttpEntity<MultiValueMap<String, Object>> request = createRequest(userId, "password");
+    final ResponseEntity<String> response = template()
+        .postForEntity("/login", request, String.class);
 
-        softly.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
-    }
+    softly.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+  }
 
-    @SuppressWarnings("SameParameterValue")
-    private HttpEntity<MultiValueMap<String, Object>> createRequest(final String userId, final String password) {
-        return HtmlFormDataBuilder.urlEncodedForm()
-                .post()
-                .addParameter("userId", userId)
-                .addParameter("password", password)
-                .addParameter("name", "나인제로")
-                .addParameter("email", "ninezero90hy@gmail.com")
-                .build();
-    }
+  @SuppressWarnings("SameParameterValue")
+  private HttpEntity<MultiValueMap<String, Object>> createRequest(final String userId,
+      final String password) {
+    return HtmlFormDataBuilder.urlEncodedForm()
+        .post()
+        .addParameter("userId", userId)
+        .addParameter("password", password)
+        .addParameter("name", "나인제로")
+        .addParameter("email", "ninezero90hy@gmail.com")
+        .build();
+  }
 
 }

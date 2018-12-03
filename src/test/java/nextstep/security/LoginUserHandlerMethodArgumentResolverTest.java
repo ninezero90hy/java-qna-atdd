@@ -1,5 +1,7 @@
 package nextstep.security;
 
+import static org.mockito.Mockito.when;
+
 import nextstep.UnAuthenticationException;
 import nextstep.domain.User;
 import org.junit.Before;
@@ -12,68 +14,71 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import support.test.BaseTest;
 
-import static org.mockito.Mockito.when;
-
 @RunWith(MockitoJUnitRunner.class)
 public class LoginUserHandlerMethodArgumentResolverTest extends BaseTest {
-    @Mock
-    private MethodParameter parameter;
 
-    @Mock
-    private NativeWebRequest request;
+  @Mock
+  private MethodParameter parameter;
 
-    @Mock
-    private LoginUser annotedLoginUser;
+  @Mock
+  private NativeWebRequest request;
 
-    private LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
+  @Mock
+  private LoginUser annotedLoginUser;
 
-    @Before
-    public void setup() {
-        loginUserHandlerMethodArgumentResolver = new LoginUserHandlerMethodArgumentResolver();
-    }
+  private LoginUserHandlerMethodArgumentResolver loginUserHandlerMethodArgumentResolver;
 
-    @Test
-    public void loginUser_normal() throws Exception {
-        User sessionUser = new User("sanjigi", "password", "name", "javajigi@slipp.net");
-        when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION)).thenReturn(sessionUser);
+  @Before
+  public void setup() {
+    loginUserHandlerMethodArgumentResolver = new LoginUserHandlerMethodArgumentResolver();
+  }
 
-        User loginUser = (User) loginUserHandlerMethodArgumentResolver.resolveArgument(parameter, null, request, null);
+  @Test
+  public void loginUser_normal() throws Exception {
+    User sessionUser = new User("sanjigi", "password", "name", "javajigi@slipp.net");
+    when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION))
+        .thenReturn(sessionUser);
 
-        softly.assertThat(loginUser).isEqualTo(sessionUser);
-    }
+    User loginUser = (User) loginUserHandlerMethodArgumentResolver
+        .resolveArgument(parameter, null, request, null);
 
-    @Test(expected = UnAuthenticationException.class)
-    public void loginUser_required_guest() throws Exception {
-        when(annotedLoginUser.required()).thenReturn(true);
-        when(parameter.getParameterAnnotation(LoginUser.class)).thenReturn(annotedLoginUser);
-        when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION))
-                .thenReturn(User.GUEST_USER);
+    softly.assertThat(loginUser).isEqualTo(sessionUser);
+  }
 
-        loginUserHandlerMethodArgumentResolver.resolveArgument(parameter, null, request, null);
-    }
+  @Test(expected = UnAuthenticationException.class)
+  public void loginUser_required_guest() throws Exception {
+    when(annotedLoginUser.required()).thenReturn(true);
+    when(parameter.getParameterAnnotation(LoginUser.class)).thenReturn(annotedLoginUser);
+    when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION))
+        .thenReturn(User.GUEST_USER);
 
-    @Test
-    public void loginUser_not_required_guest() throws Exception {
-        when(annotedLoginUser.required()).thenReturn(false);
-        when(parameter.getParameterAnnotation(LoginUser.class)).thenReturn(annotedLoginUser);
-        when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION))
-                .thenReturn(User.GUEST_USER);
+    loginUserHandlerMethodArgumentResolver.resolveArgument(parameter, null, request, null);
+  }
 
-        User guestUser = (User) loginUserHandlerMethodArgumentResolver.resolveArgument(parameter, null, request, null);
-        softly.assertThat(guestUser).isEqualTo(User.GUEST_USER);
-    }
+  @Test
+  public void loginUser_not_required_guest() throws Exception {
+    when(annotedLoginUser.required()).thenReturn(false);
+    when(parameter.getParameterAnnotation(LoginUser.class)).thenReturn(annotedLoginUser);
+    when(request.getAttribute(HttpSessionUtils.USER_SESSION_KEY, WebRequest.SCOPE_SESSION))
+        .thenReturn(User.GUEST_USER);
 
-    @Test
-    public void supportsParameter_false() {
-        when(parameter.hasParameterAnnotation(LoginUser.class)).thenReturn(false);
+    User guestUser = (User) loginUserHandlerMethodArgumentResolver
+        .resolveArgument(parameter, null, request, null);
+    softly.assertThat(guestUser).isEqualTo(User.GUEST_USER);
+  }
 
-        softly.assertThat(loginUserHandlerMethodArgumentResolver.supportsParameter(parameter)).isFalse();
-    }
+  @Test
+  public void supportsParameter_false() {
+    when(parameter.hasParameterAnnotation(LoginUser.class)).thenReturn(false);
 
-    @Test
-    public void supportsParameter_true() {
-        when(parameter.hasParameterAnnotation(LoginUser.class)).thenReturn(true);
+    softly.assertThat(loginUserHandlerMethodArgumentResolver.supportsParameter(parameter))
+        .isFalse();
+  }
 
-        softly.assertThat(loginUserHandlerMethodArgumentResolver.supportsParameter(parameter)).isTrue();
-    }
+  @Test
+  public void supportsParameter_true() {
+    when(parameter.hasParameterAnnotation(LoginUser.class)).thenReturn(true);
+
+    softly.assertThat(loginUserHandlerMethodArgumentResolver.supportsParameter(parameter)).isTrue();
+  }
 }

@@ -1,5 +1,6 @@
 package nextstep.security;
 
+import javax.persistence.EntityNotFoundException;
 import nextstep.UnAuthenticationException;
 import nextstep.UnAuthorizedException;
 import org.slf4j.Logger;
@@ -10,28 +11,27 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import javax.persistence.EntityNotFoundException;
-
 @ControllerAdvice(annotations = Controller.class)
 public class SecurityControllerAdvice {
-    private static final Logger log = LoggerFactory.getLogger(SecurityControllerAdvice.class);
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
-    public void emptyResultData() {
-        log.debug("EntityNotFoundException is happened!");
-    }
+  private static final Logger log = LoggerFactory.getLogger(SecurityControllerAdvice.class);
 
-    @ExceptionHandler(UnAuthorizedException.class)
-    @ResponseStatus(value = HttpStatus.FORBIDDEN)
-    public void unAuthorized() {
-        log.debug("UnAuthorizedException is happened!");
-    }
+  @ExceptionHandler(EntityNotFoundException.class)
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+  public void emptyResultData() {
+    log.debug("EntityNotFoundException is happened!");
+  }
 
-    @ExceptionHandler(UnAuthenticationException.class)
-    @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
-    public String unAuthentication() {
-        log.debug("UnAuthenticationException is happened!");
-        return "/user/login";
-    }
+  @ExceptionHandler(UnAuthorizedException.class)
+  @ResponseStatus(value = HttpStatus.FORBIDDEN)
+  public void unAuthorized() {
+    log.debug("UnAuthorizedException is happened!");
+  }
+
+  @ExceptionHandler(UnAuthenticationException.class)
+  @ResponseStatus(value = HttpStatus.UNAUTHORIZED)
+  public String unAuthentication() {
+    log.debug("UnAuthenticationException is happened!");
+    return "/user/login";
+  }
 }
